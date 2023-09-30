@@ -1,0 +1,12 @@
+header {
+  width: 100vw;
+  height: 12.07729469vw;
+  background-color: #3190e8;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2.41545894vw;
+  line-height: 12.07729469vw;
+}
+header span {
+  color: white;
+}

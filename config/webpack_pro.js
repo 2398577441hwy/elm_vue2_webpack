@@ -34,7 +34,7 @@ const getStyleLoaders = (pre) => {
 module.exports = {
     entry: "./src/main.js",
     output: {
-        path: undefined,
+        path:path.resolve(__dirname, "../dist"),
         filename: "static/js/[name].js",
         chunkFilename: "static/js/[name].chunk.js",
         assetModuleFilename: "static/media/[hash:10][ext][query]",
@@ -125,11 +125,8 @@ module.exports = {
     },
     // webpack解析模块加载选项
     resolve: {
-        alias: {
-            '@': path.resolve(__dirname, '../src/')
-        },
         // 自动补全文件扩展名
-        extensions: [".vue", ".js", ".json"],
+        extensions: [".vue",".js", ".json"],
     },
     // 为了调试更加方便  
     devServer: {
@@ -138,9 +135,9 @@ module.exports = {
         open: true, //自动开启服务器
         hot: false, // 先禁用HMR  刷新导致断开连接
         historyApiFallback: true, // 解决前端路由刷新404问题
-        proxy: {
-            context: ['/v1', '/v2', '/v3', '/v4', '/shopping', '/ugc', '/bos', '/member', '/img', '/payapi', '/eus', '/promotion'],
-            target: 'https://elm.cangdu.org',
+        proxy:{
+            context:['/v1','/v2','/v3','/v4','/shopping','/ugc','/bos','/member','/img','/payapi','/eus','/promotion'],
+            target:'https://elm.cangdu.org',
             changeOrigin: true,
         }
     },
