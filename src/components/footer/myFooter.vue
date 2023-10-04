@@ -310,7 +310,7 @@
         </symbol>
       </defs>
     </svg>
-    <section class="guide_item">
+    <router-link class="guide_item" to="home">
       <svg class="icon_style">
         <use
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -318,8 +318,8 @@
         ></use>
       </svg>
       <span>外卖</span>
-    </section>
-    <section class="guide_item">
+    </router-link>
+    <router-link to="search" class="guide_item">
       <svg class="icon_style">
         <use
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -327,8 +327,8 @@
         ></use>
       </svg>
       <span>搜索</span>
-    </section>
-    <section class="guide_item">
+    </router-link>
+    <router-link to="order" class="guide_item">
       <svg class="icon_style">
         <use
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -336,8 +336,8 @@
         ></use>
       </svg>
       <span>订单</span>
-    </section>
-    <section class="guide_item">
+    </router-link>
+    <router-link to="profile" class="guide_item">
       <svg class="icon_style">
         <use
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -345,7 +345,7 @@
         ></use>
       </svg>
       <span>我的</span>
-    </section>
+    </router-link>
   </section>
 </template>
 

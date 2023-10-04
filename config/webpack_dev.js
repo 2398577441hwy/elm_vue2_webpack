@@ -89,7 +89,7 @@ module.exports = {
             // 处理vue
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
             }
         ]
     },
@@ -114,6 +114,8 @@ module.exports = {
     // 调试加友好 报源码错误
     devtool: "cheap-module-source-map",
     // 进行代码分割 主要分割node_modules代码和import动态导入的代码
+    
+    // lintOnSave: false,
     optimization: {
         splitChunks: {
             chunks: "all",
@@ -136,7 +138,7 @@ module.exports = {
         host: "localhost",
         port: 3000,
         open: true, //自动开启服务器
-        hot: false, // 先禁用HMR  刷新导致断开连接
+        hot: true, // 开启HMR
         historyApiFallback: true, // 解决前端路由刷新404问题
         proxy: {
             context: ['/v1', '/v2', '/v3', '/v4', '/shopping', '/ugc', '/bos', '/member', '/img', '/payapi', '/eus', '/promotion'],

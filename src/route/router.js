@@ -23,6 +23,40 @@ const routes = [
         {
             path:'/forget',
             component:()=>import("../view/forget")
+        },
+        {
+            path:'/home',
+            component:()=>import("../view/home")
+        },
+        {
+            path:'/download',
+            component:()=>import("../view/download")
+        },
+        {
+            path:'/order',
+            component:()=>import("../view/order")
+        },
+        {
+            path:'/profile',
+            component:()=>import("../view/profile")
+        },
+        {
+            path:'/search',
+            component:()=>import("../view/search")
+        },
+        {
+            path:'/service',
+            component:()=>import("../view/service"),
+            // children:[
+            //     {
+            //         path:'questionDetail',
+            //         component:()=>import('../view/service/questionDetail')
+            //     }
+            // ]
+        },
+        {
+            path:'/vipcard',
+            component:()=>import("../view/vipcard")
         }
     ]
     }
