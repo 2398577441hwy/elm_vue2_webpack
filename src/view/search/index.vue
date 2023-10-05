@@ -1,9 +1,12 @@
 <template>
   <div>
-    <header>
-      <span>《</span>
-      <h4 class="title">搜索</h4>
-    </header>
+    <myHeader goBack="true">
+      <template v-slot:go>
+      </template>
+      <template v-slot:title>
+        搜索
+      </template>
+    </myHeader>
     <form action="">
       <input type="text" placeholder="请输入商家或美食名称" />
       <input type="submit" value="提交" />
@@ -22,38 +25,21 @@
 </template>
 
 <script>
-export default {};
+import myHeader from '@/components/header/myHeader.vue'
+export default {
+  components:{myHeader}
+};
 </script>
 
 <style scoped lang="less">
 @import '@/style/bass.less';
 @baseSize: 4.14vw;
-
-header {
-    width: 100%;
-    height: (50 / @baseSize);
-    background: #3190e8;
-    display: flex;
-    line-height: (50 / @baseSize);
-    text-align: center;
-    color: white;
-    font-size: (20 / @baseSize);
-
-    span {
-        width: 10%;
-    }
-
-    h4 {
-        width: 90%;
-    }
-}
-
 form {
+    margin-top:(60 / @baseSize);
     height: (70 / @baseSize);
     padding: (15 / @baseSize) (10 / @baseSize);
     background: white;
     display: flex;
-
     input {
         margin-right: (5 / @baseSize);
         height: (40 / @baseSize);

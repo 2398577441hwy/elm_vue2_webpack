@@ -1,9 +1,11 @@
 <template>
   <div>
-    <header>
-        <span>《</span>
-                <h4 class="title">我的</h4>
-    </header>
+    <myHeader goBack="true">
+        <template v-slot:title>
+            我的
+        </template>
+    </myHeader>
+
     <section class="info">
         <span class="myimg">
             <img src="@/asset/img/微信图片_20230819105738.jpg" alt="">
@@ -11,9 +13,17 @@
         <hgroup>
             <div class="nav">
                 <p>17832859744</p>
-                <p><span></span>暂无绑定手机号</p>
+                <p><span>
+                    <svg width="100%" height="100%" class="icon-mobile" fill="#fff">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#mobile"></use>
+                    </svg>
+                </span>暂无绑定手机号</p>
             </div>
-            <span class="more">></span>
+            <span class="more">
+                <svg width="100%" height="100%" class="arrow-svg" fill="#fff">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+                </svg>
+            </span>
         </hgroup>
     </section>
     <nav class="nav">
@@ -31,20 +41,66 @@
         </div>
     </nav>
     <ul class="moreinfo">
-        <li><hgroup><span class="tu"></span>我的订单</hgroup><span>></span></li>
-        <li><hgroup><span class="tu"></span>积分商城</hgroup><span>></span></li>
-        <li><hgroup><span class="tu"></span>饿了么会员卡</hgroup><span>></span></li>
+        <li><hgroup>
+            <svg class="tu" fill="#4aa5f0" width="100%" height="100%">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#order"></use>
+            </svg>
+            我的订单</hgroup>
+        <span>
+            <svg width="30%" height="30%" class="arrow-svg" fill="gray">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+        </span></li>
+        <li><hgroup>
+            <svg class="tu" fill="#fc7b53" width="100%" height="100%">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#point"></use>
+            </svg>
+            积分商城</hgroup>
+        <span>
+            <svg width="30%" height="30%" class="arrow-svg" fill="gray">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+        </span></li>
+        <li><hgroup>
+            <svg class="tu" fill="#ffc636" width="100%" height="100%">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#vip"></use>
+            </svg>
+            饿了么会员卡</hgroup>
+        <span>
+            <svg width="30%" height="30%" class="arrow-svg" fill="gray">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+        </span></li>
     </ul>
     <ul class="moreinfo">
-        <li><hgroup><span class="tu"></span>服务中心</hgroup><span>></span></li>
-        <li><hgroup><span class="tu"></span>下载饿了么APP</hgroup><span>></span></li>
+        <li><hgroup>
+            <svg class="tu" fill="#4aa5f0" width="100%" height="100%">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#service"></use>
+            </svg>
+            服务中心</hgroup>
+        <span>
+            <svg width="30%" height="30%" class="arrow-svg" fill="gray">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+        </span></li>
+        <li><hgroup>
+           <svg class="tu" fill="#4aa5f0" width="100%" height="100%">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#download"></use>
+            </svg>
+            下载饿了么APP</hgroup>
+            <span>
+                <svg width="30%" height="30%" class="arrow-svg" fill="gray">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
+            </svg>
+            </span></li>
     </ul>
   </div>
 </template>
 
 <script>
+import myHeader from '@/components/header/myHeader.vue'
 export default {
-
+    components:{myHeader}
 }
 </script>
 
@@ -52,26 +108,9 @@ export default {
 @import '@/style/bass.less';
 @baseSize: 4.14vw;
 
-header {
-    width: 100%;
-    height: (50 / @baseSize);
-    background: #3190e8;
-    display: flex;
-    line-height: (50 / @baseSize);
-    text-align: center;
-    color: white;
-    font-size: (20 / @baseSize);
-
-    span {
-        width: 10%;
-    }
-
-    h4 {
-        width: 90%;
-    }
-}
 
 .info {
+    margin-top: (50 / @baseSize);
     height: (99 / @baseSize);
     background: #3190e8;
     border-top: 1px solid white;
@@ -166,14 +205,14 @@ nav{
             width: 90%;
             font-size: (18 / @baseSize);
             // border:1px solid black;
-            padding-left: (10 / @baseSize);
+            padding-left: (6 / @baseSize);
             .tu{
                 display: inline-block;
                 width: (20 / @baseSize);
                 height: (18 / @baseSize);
-                border: 1px solid black;
-                vertical-align: middle;
-                margin-right: (8 / @baseSize);
+                // border: 1px solid black;
+                vertical-align: text-top;
+                // margin-right: (3 / @baseSize);
             }
         }
         span{

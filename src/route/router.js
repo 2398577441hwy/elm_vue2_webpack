@@ -57,6 +57,14 @@ const routes = [
         {
             path:'/vipcard',
             component:()=>import("../view/vipcard")
+        },
+        {
+            path:'/header',
+            component:()=>import('../components/header/myHeader.vue')
+        },
+        {
+            path:'/shop',
+            component:()=>import('../view/shop')
         }
     ]
     }

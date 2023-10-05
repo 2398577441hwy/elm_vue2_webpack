@@ -1,58 +1,56 @@
 <template>
  <div>
-  <header>
-        <span>《</span>
-        <h4 class="title">服务中心</h4>
-    </header>
+  <myHeader goBack="true">
+    <template v-slot:title>
+        服务中心
+    </template>
+  </myHeader>
     <nav>
-        <div><span></span><p>在线客服</p></div>
-        <div><span></span><p>在线客服</p></div>
+        <div><svg data-v-1a228d92=""><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#human"></use></svg><p>在线客服</p></div>
+        <div><svg data-v-1a228d92=""><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#phone"></use></svg><p>在线客服</p></div>
     </nav>
     <section>
         <h4>热门问题</h4>
         <ul>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
-            <li><span>超级会员权益说明</span><span>></span></li>
+            <li><span>超级会员权益说明</span>
+            <span>
+                <svg width="30%" height="30%" data-v-1a228d92="" fill="#999" class="arrow-svg"><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg>
+            </span></li>
+            <li><span>超级会员权益说明</span>
+            <span>
+                <svg width="30%" height="30%" data-v-1a228d92="" fill="#999" class="arrow-svg"><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg>
+            </span></li>
+            <li><span>超级会员权益说明</span>
+            <span>
+                <svg width="30%" height="30%" data-v-1a228d92="" fill="#999" class="arrow-svg"><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg>
+            </span></li>
+            <li><span>超级会员权益说明</span>
+            <span>
+                <svg width="30%" height="30%" data-v-1a228d92="" fill="#999" class="arrow-svg"><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg>
+            </span></li>
+            <li><span>超级会员权益说明</span>
+            <span>
+                <svg width="30%" height="30%" data-v-1a228d92="" fill="#999" class="arrow-svg"><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg>
+            </span></li>
+            <li><span>超级会员权益说明</span>
+            <span>
+                <svg width="30%" height="30%" data-v-1a228d92="" fill="#999" class="arrow-svg"><use data-v-1a228d92="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg>
+            </span></li>
         </ul>
     </section>
  </div>
 </template>
 
 <script>
+import myHeader from '@/components/header/myHeader.vue'
 export default {
-
+    components:{myHeader}
 }
 </script>
 
 <style scoped lang="less">
 @import '@/style/bass.less';
 @baseSize:4.14vw;
-header {
-    width: 100%;
-    height: (50 / @baseSize);
-    background: #3190e8;
-    display: flex;
-    line-height: (50 / @baseSize);
-    text-align: center;
-    color: white;
-    font-size: (20 / @baseSize);
-
-    span {
-        width: 10%;
-    }
-
-    h4 {
-        width: 90%;
-    }
-}
 nav{
     height: (103 / @baseSize);
     // border:1px solid black;
@@ -60,15 +58,16 @@ nav{
     justify-content:space-between;
     text-align: center;
     background: white;
+    margin-top: (50 / @baseSize);
     div{
         // border:1px solid black;
         width: 100%;
         margin-top: (25 / @baseSize);
-        span{
+        svg{
             display: inline-block;
             width: (25 / @baseSize);
             height: (25 / @baseSize);
-            border:1px solid black;
+            // border:1px solid black;
         }
     }
 }
