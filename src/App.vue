@@ -3,19 +3,16 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
-    <myFooter/>
     <iconSvg></iconSvg>
   </div>
 </template>
 
 <script>
 import iconSvg from "./components/svg/mySvg.vue";
-import myFooter from './components/footer/myFooter.vue'
 export default {
   name: "App",
   components: {
     iconSvg,
-    myFooter
   },
 };
 </script>

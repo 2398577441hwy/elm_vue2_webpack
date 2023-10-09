@@ -77,18 +77,20 @@
         </ul>
       </div>
     </div>
+    <myFooter></myFooter>
   </div>
 </template>
 
 <script>
 import myHeader from "@/components/header/myHeader.vue";
+import myFooter from '@/components/footer/myFooter.vue'
 // 相当于引入js
 import Swiper from "swiper";
 // 引入css
 import "swiper/css/swiper.min.css";
 import {homenav,homelist,cityGuess} from '@/service/getData.js'
 export default {
-  components: { myHeader },
+  components: { myHeader,myFooter },
   data(){
     return {
       geohash:this.$store.state.geohash,
@@ -136,7 +138,6 @@ export default {
     },
     // 跳转到商铺页面
     goShop(id){
-      console.log(this)
       this.$router.push({
         path:'/shop',
         query:{
