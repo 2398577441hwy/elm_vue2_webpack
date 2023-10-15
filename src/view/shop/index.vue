@@ -95,32 +95,7 @@
                     ><span class="price">￥{{ item.satisfy_rate }}</span
                     >起</span
                   >
-                  <span class="choose">
-                    <p v-if="item.specifications.length > 0" class="guige">
-                      选规格
-                    </p>
-                    <p v-else class="num">
-                      <transition name="fade">
-                        <span v-if="item.num" @click="clearItemNum($event)"
-                          >-</span
-                        >
-                      </transition>
-                      <transition name="fade-num">
-                        <span v-if="item.num">{{ item.num }}</span>
-                      </transition>
-                      <span
-                        @click="
-                          addItemNum(
-                            $event,
-                            item.item_id,
-                            item.name,
-                            item.satisfy_rate,
-                          )
-                        "
-                        >+</span
-                      >
-                    </p>
-                  </span>
+                  <myButton :item="item" :moveDot="moveDot"></myButton>
                 </div>
               </hgroup>
             </dd>
@@ -129,65 +104,12 @@
       </div>
     </div>
 
-    <div class="cartfooter">
-      <dl class="cartlist">
-        <dt>
-          <p>购物车</p>
-          <p>
-            <svg data-v-c8684834="">
-              <use
-                data-v-c8684834=""
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                xlink:href="#cart-remove"
-              ></use>
-            </svg>
-            清空
-          </p>
-        </dt>
-        <dd>
-          <h3>鲤鱼</h3>
-          <div class="price">￥<strong>20</strong></div>
-          <div class="svg">
-            <svg data-v-c8684834="" fill="#3190e8">
-              <use
-                data-v-c8684834=""
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                xlink:href="#cart-minus"
-              ></use>
-            </svg>
-            <div class="cart_num">1</div>
-            <svg data-v-c8684834="" class="cart_add" fill="#3190e8">
-              <use
-                data-v-c8684834=""
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                xlink:href="#cart-add"
-              ></use>
-            </svg>
-          </div>
-        </dd>
-      </dl>
-      <div class="outline active">
-        <div class="maincolor active">
-          <svg data-v-c8684834="" class="cart_icon">
-            <use
-              data-v-c8684834=""
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              xlink:href="#cart-icon"
-            ></use>
-          </svg>
-        </div>
-        <span class="flag">1</span>
-      </div>
-      <hgroup>
-        <h3>￥0.00</h3>
-        <p>配送费￥5</p>
-      </hgroup>
-      <button class="active">还差￥20起送</button>
-    </div>
+    <cartFooter></cartFooter>
     <transition
       appear
       @before-enter="beforeEnter"
       @after-enter="afterEnter"
+      @after-leave="afterLeave"
       v-for="(item, index) in moveDot"
       :key="index"
     >
@@ -205,7 +127,9 @@
 
 <script>
 import { shoplist } from "@/service/getData.js";
-
+import {mapState} from 'vuex'
+import myButton from "@/components/button/index.vue";
+import cartFooter from "@/components/buy_cart/index.vue";
 export default {
   data() {
     return {
@@ -214,19 +138,22 @@ export default {
       flagrefs: [],
       clickflag: false,
       timer: null,
-      goodNum: 0,
       moveDot: [],
       elLeft: 0,
       elTop: 0,
-      receiveInCart: false,
       windowHeight: window.innerHeight,
       shopId: this.$route.query.id,
-      shopCartList: [],
+      shopCartList: this.$store.state.shopCartList,
     };
+  },
+  computed:{
+    ...mapState['receiveInCart']
   },
   mounted() {
     this.getData();
+    this.$bus.$on("dotPostion", this.addcart);
   },
+  components: { myButton, cartFooter },
   watch: {
     // 上来选中column的active
     shopDetailList: {
@@ -282,51 +209,12 @@ export default {
       });
     },
 
-    addItemNum(event, item_id, name, price,item) {
-      this.goodNum++;
-      this.moveDot = [...this.moveDot, true];
-      this.elLeft = event.target.getBoundingClientRect().left;
-      this.elTop = event.target.getBoundingClientRect().top;
-      this.addcart(item_id, name, price);
-    },
     // 添加商品到购物车
-    addcart(item_id, name, price) {
-      const obj = {
-        item_id,
-        name,
-        price,
-      };
-      let flag = false
-      this.shopCartList.forEach(element=>{
-        if(element.item_id === obj.item_id){
-          flag = true
-          element.num++
-        }
-      })
-
-      if(!flag){
-        console.log('添加num属性')
-        // 添加响应式的元素
-        this.$set(obj,'num',1)
-        this.shopCartList.push(obj)
-      }
-      console.log(this.shopCartList)
-    },
-
-    clearItemNum() {
-      this.goodNum--;
-    },
-    listenInCart() {
-      // 表示已经到达了目标位置
-      if (!this.receiveInCart) {
-        this.receiveInCart = true;
-        this.$refs.cartContainer.addEventListener("animationend", () => {
-          this.receiveInCart = false;
-        });
-        this.$refs.cartContainer.addEventListener("webkitAnimationEnd", () => {
-          this.receiveInCart = false;
-        });
-      }
+    addcart(elLeft, elTop, moveDot) {
+      this.elLeft = elLeft;
+      this.elTop = elTop;
+      this.moveDot = moveDot;
+  
     },
     beforeEnter(el) {
       el.style.transform = `translate3d(0,${
@@ -342,6 +230,11 @@ export default {
       el.children[0].style.transition = "transform 0.55s  ease-out";
       this.moveDot = [];
     },
+    afterLeave() {
+      if (!this.receiveInCart) {
+        this.$store.commit('CHANGERECEIVEINCART',true)
+      }
+    },
   },
 };
 </script>
@@ -349,23 +242,7 @@ export default {
 <style lang="less" scoped>
 @import "@/style/bass.less";
 @baseSize: 4.14vw;
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.5s ease-out;
-}
-// 离开的时候
-.fade-enter,
-.fade-leave-to {
-  transform: translateX((8 / @baseSize));
-  opacity: 0;
-}
-.fade-enter-active {
-  transition: all 0.3 ease-out;
-}
-.fade-num-enter,
-.fade-num-leave-to {
-  opacity: 0;
-}
+
 .move_dot {
   position: fixed;
   bottom: 30px;
@@ -567,54 +444,6 @@ header {
           .footer {
             display: flex;
             justify-content: space-between;
-            .choose {
-              .guige {
-                color: white;
-                background: #3190e8;
-                padding: (5 / @baseSize);
-                border-radius: (5 / @baseSize);
-              }
-              .num {
-                width: (75 / @baseSize);
-                position: relative;
-                span {
-                  position: absolute;
-                  display: block;
-                  &:first-child {
-                    height: (20 / @baseSize);
-                    text-align: center;
-                    line-height: (15 / @baseSize);
-                    width: (20 / @baseSize);
-                    left: 0;
-                    background: white;
-                    color: #3190e8;
-                    border: 1px solid #3190e8;
-                    border-radius: 50%;
-                    font-size: (25 / @baseSize);
-                  }
-                  &:nth-child(2) {
-                    height: (20 / @baseSize);
-                    text-align: center;
-                    line-height: (20 / @baseSize);
-                    width: (25 / @baseSize);
-                    left: (22 / @baseSize);
-                    color: black;
-                  }
-                  &:last-child {
-                    height: (20 / @baseSize);
-                    text-align: center;
-                    line-height: (20 / @baseSize);
-                    width: (20 / @baseSize);
-                    left: (49 / @baseSize);
-                    font-size: (16 / @baseSize);
-                    color: white;
-                    background: #3190e8;
-                    border-radius: 50%;
-                    border: 1px solid #3190e8;
-                  }
-                }
-              }
-            }
             .price {
               color: #f60;
               font-size: (18 / @baseSize);
@@ -624,140 +453,6 @@ header {
           }
         }
       }
-    }
-  }
-}
-.cartfooter {
-  width: 100%;
-  // height: (52 / @baseSize);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  color: white;
-  .cartlist {
-    color: black;
-    dt {
-      height: (50 / @baseSize);
-      background: #eceff1;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 (10 / @baseSize);
-      line-height: (50 / @baseSize);
-      svg {
-        width: (15 / @baseSize);
-        height: (15 / @baseSize);
-      }
-    }
-    dd {
-      height: (55 / @baseSize);
-      background: white;
-      // border: 1px solid black;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 (10 / @baseSize);
-      line-height: (55 / @baseSize);
-      h3 {
-        // border: 1px solid black;
-        flex: 2;
-        text-align: left;
-      }
-      .svg {
-        flex: 2;
-        display: flex;
-        // border: 1px solid black;
-        line-height: (55 / @baseSize);
-        height: 100%;
-        .cart_num,
-        svg {
-          margin-top: (20 / @baseSize);
-          margin-left: (5 / @baseSize);
-        }
-        svg {
-          width: (23 / @baseSize);
-          height: (23 / @baseSize);
-          &:first-child {
-            margin-left: (100 / @baseSize);
-          }
-        }
-        .cart_num {
-          line-height: (23 / @baseSize);
-          // border: 1px solid black;
-        }
-      }
-      .price {
-        flex: 1;
-        text-align: right;
-        // border: 1px solid black;
-        font-size: (18 / @baseSize);
-        color: #f60;
-      }
-    }
-  }
-  .outline {
-    position: absolute;
-    display: block;
-    width: (60 / @baseSize);
-    height: (60 / @baseSize);
-    bottom: (15 / @baseSize);
-    left: (18 / @baseSize);
-    padding-top: (5 / @baseSize);
-    border-radius: 50%;
-    background: #535356;
-    .flag {
-      height: (20 / @baseSize);
-      min-width: (20 / @baseSize);
-      line-height: (20 / @baseSize);
-      background: #f60;
-      border-radius: 100%;
-      border: 3px solid #f60;
-      position: absolute;
-      right: (-3 / @baseSize);
-      top: (-3 / @baseSize);
-    }
-    &.active {
-      background: #3d3d3f;
-    }
-    .maincolor {
-      display: inline-block;
-      width: (50 / @baseSize);
-      height: (50 / @baseSize);
-      border-radius: 50%;
-      background: #3d3d3f;
-      padding-top: (7 / @baseSize);
-      padding-left: (3 / @baseSize);
-      &.active {
-        background: #3190e8;
-      }
-      svg {
-        width: (30 / @baseSize);
-        height: (30 / @baseSize);
-      }
-    }
-  }
-  hgroup {
-    float: left;
-    width: 70%;
-    height: (52 / @baseSize);
-    background: #3d3d3f;
-    text-align: left;
-    padding: (3 / @baseSize) (90 / @baseSize);
-    h3 {
-      font-size: (20 / @baseSize);
-    }
-    p {
-      font-size: (12 / @baseSize);
-    }
-  }
-  button {
-    color: white;
-    float: right;
-    width: 30%;
-    height: (52 / @baseSize);
-    background: #535356;
-    border: 0;
-    font-size: (18 / @baseSize);
-    &.active {
-      background: #4cd964;
     }
   }
 }

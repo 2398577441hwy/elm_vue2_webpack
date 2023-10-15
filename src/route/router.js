@@ -69,6 +69,10 @@ const routes = [
         {
             path:'/test',
             component:()=>import('../view/test/test1.vue')
+        },
+        {
+            path:'/sortShop',
+            component:()=>import('../view/shop/sortShop.vue')
         }
     ]
     }

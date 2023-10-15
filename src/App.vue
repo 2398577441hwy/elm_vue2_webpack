@@ -26,4 +26,20 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
+@baseSize:4.14vw;
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+a{
+    text-decoration: none;
+}
+body{
+    background:#f5f5f5;
+    // border:1px solid black;
+}
+ul{
+    list-style: none;
+}
 </style>
