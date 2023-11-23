@@ -71,7 +71,7 @@
             <dd v-for="item in list.foods" :key="item.id">
               <div class="img">
                 <span class="logo"></span>
-                <img :src="'/img/' + item.image_path" alt="" />
+                <img src="@/asset/img/1.webp" alt="" />
               </div>
               <hgroup>
                 <strong>{{ item.name }}</strong>

@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="store-bd">
+    <div class="store-bd" v-if="!loadingShow">
       <ul>
-        <li v-for="item in goodsList" :key="item.id" @click="goShop(item.id)">
-          <img :src="'/img/' + item.image_path" alt="" />
+        <li v-for="item in goodsList" :key="item.id" @click="goShop(item.id,item.name)">
+          <!-- <img :src="'/img/' + item.image_path" alt="" /> -->
+          <img src="@/asset/img/1.webp" alt="">
           <hgroup>
             <header>
               <h5>{{ item.name }}</h5>
@@ -35,31 +36,35 @@
         </li>
       </ul>
     </div>
-    */
+    <loading :show="loadingShow"/>
   </div>
 </template>
 
 <script>
 import { homelist } from "@/service/getData.js";
+import loading from '@/components/loading/index.vue'
 export default {
   data() {
     return {
       goodsList: [],
+      loadingShow:true
     };
   },
+  components:{loading},
   props: ["geohash"],
   mounted() {
     this.getData();
   },
   methods: {
     async getData() {
-      console.log(this.geohash);
       const str = this.geohash.split(",");
       const latitude = str[0];
       const longitude = str[1];
       this.goodsList = await homelist(latitude, longitude);
+      this.loadingShow = false
     },
-    goShop(id) {
+    goShop(id,name) {
+      this.$store.state.shopinfo={id,name}
       this.$router.push({
         path: "/shop",
         query: {
@@ -76,9 +81,11 @@ export default {
 @baseSize: 4.14vw;
 .store-bd {
   ul {
+    background: white;
     li {
       position: relative;
       // border:1px solid black;
+      padding-top: (10 / @baseSize);
       margin: (5 / @baseSize);
       height: (90 / @baseSize);
       img {

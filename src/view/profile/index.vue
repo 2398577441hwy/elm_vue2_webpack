@@ -6,13 +6,15 @@
         </template>
     </myHeader>
 
-    <section class="info">
+    <section class="info" @click="userinfo.username ? $router.push('/info') : $router.push('/login')">
         <span class="myimg">
-            <img src="@/asset/img/微信图片_20230819105738.jpg" alt="">
+            <!-- http://localhost:3000/profile -->
+            <img :src="`http://localhost:8001/img/${userinfo.avatar}`"  alt="" v-if="userinfo.avatar">
+            <svg  v-else data-v-0fc4ab7a="" class="privateImage-svg"><use data-v-0fc4ab7a="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#avatar-default"></use></svg>
         </span>
         <hgroup>
             <div class="nav">
-                <p>17832859744</p>
+                <p>{{userinfo.username || '登录/注册'}}</p>
                 <p><span>
                     <svg width="100%" height="100%" class="icon-mobile" fill="#fff">
                         <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#mobile"></use>
@@ -61,7 +63,7 @@
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
             </svg>
         </span></li>
-        <li><hgroup>
+        <router-link class="item" to="/vipcard"><hgroup>
             <svg class="tu" fill="#ffc636" width="100%" height="100%">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#vip"></use>
             </svg>
@@ -70,7 +72,7 @@
             <svg width="30%" height="30%" class="arrow-svg" fill="gray">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use>
             </svg>
-        </span></li>
+        </span></router-link>
     </ul>
     <ul class="moreinfo">
         <li><hgroup>
@@ -100,7 +102,12 @@
 <script>
 import myHeader from '@/components/header/myHeader.vue'
 export default {
-    components:{myHeader}
+    components:{myHeader},
+    data(){
+        return {
+            userinfo:this.$store.state.userinfo
+        }
+    }
 }
 </script>
 
@@ -113,11 +120,10 @@ export default {
     margin-top: (50 / @baseSize);
     height: (99 / @baseSize);
     background: #3190e8;
-    border-top: 1px solid white;
+    // border-top: 1px solid white;
     padding: (15 / @baseSize) (10 / @baseSize);
     display: flex;
-
-    img {
+    .privateImage-svg,img {
         width: (65 / @baseSize);
         height: (65 / @baseSize);
         border-radius: 50%;
@@ -146,7 +152,7 @@ export default {
                         display: inline-block;
                         width: (15 / @baseSize);
                         height: (20 / @baseSize);
-                        border:1px solid white;
+                        // border:1px solid white;
                         margin-right: (5 / @baseSize);
                         vertical-align: text-bottom;
                     }
@@ -196,10 +202,11 @@ nav{
 .moreinfo{
     background: white;
     margin-top: (10 / @baseSize);
-    li{
+    li,.item{
         height: (47 / @baseSize);
         text-align: left;
         display: flex;
+        color: rgb(66, 65, 65);
         line-height: (47 / @baseSize);
         hgroup{
             width: 90%;

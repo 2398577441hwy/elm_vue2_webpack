@@ -48,7 +48,7 @@
       <div class="list" v-show="title">
         <div class="title" v-show="show[0]">
           <ul class="title1">
-            <li v-for="(item,index) in catagoryList" :key="item.id" @click="checkedCategory(index)" :class="{active:currentCatagoryIndex === index}">
+            <li v-for="(item,index) in catagoryList" :key="index" @click="checkedCategory(index,item.id)" :class="{active:currentCatagoryIndex === index}">
               <section><img class="flag" :src="getImgPath(item.image_url)"/> {{item.name}}</section>
               <section>
                 <span class="num">{{item.count}}</span>
@@ -72,7 +72,7 @@
             </li>
           </ul>
           <ul class="title2">
-            <li v-for="item in currentCatagory" :key="item.id"><span>{{item.name}}</span> <span>{{item.count}}</span></li>
+            <li v-for="(item,index) in currentCatagory" :key="index" @click="restaurant_category_ids = item.id"><span>{{item.name}}</span> <span>{{item.count}}</span></li>
           </ul>
         </div>
         <ul class="sort" v-show="show[1]" @click="sortMethods($event)">
@@ -141,7 +141,7 @@
           <dl class="select">
             <dt>
               <h5>配送方式</h5>
-              <p v-for="item in deliveryList" :key="item.id" @click="deliveryCheck($event,item.id)">
+              <p v-for="(item,index) in deliveryList" :key="index" @click="deliveryCheck($event,item.id)">
                 <svg data-v-6cc1fce6="" style="opacity: 1">
                   <use
                     data-v-6cc1fce6=""
@@ -155,7 +155,7 @@
             <dd>
               <h5>商家属性(可以多选)</h5>
               <ul>
-                <li v-for="item in activityList" :key="item.id" @click="shopActive($event,item.id)">
+                <li v-for="(item,index) in activityList" :key="index" @click="shopActive($event,item.id)">
                   <span
                     style="
                       padding: 3px;
@@ -173,7 +173,7 @@
         </div>
       </div>
     </transition>
-    <shopList :geohash="geohash"></shopList>
+    <shopList :geohash="geohash" class="shoplist" :restaurant_category_id="restaurant_category_id" :restaurant_category_ids="restaurant_category_ids" :order_by="order_by" :delivery_mode="delivery_mode" :support_ids="support_ids"></shopList>
   </div>
 </template>
 
@@ -191,10 +191,19 @@ export default {
       deliveryList:[],
       activityList:[],
       currentCatagoryIndex:0,
-      sortType:'',
-      delivery_mode:'',
+      sortType:4,
       activities_ids: [],
-      geohash:this.$route.query.geohash
+      geohash:this.$route.query.geohash || this.$store.state.geohash,
+      // 食品类型id
+      restaurant_category_id:'',
+      // 筛选类型id
+      restaurant_category_ids:'',
+      // 何种方式排序
+      order_by:'',
+      // 选中的配送方式
+      delivery_mode:[],
+      // 选中商品活动列表
+      support_ids:[],
     };
   },
   mixins:[getImgPath],
@@ -203,7 +212,7 @@ export default {
     currentCatagory(){
       //  || []
       if(this.catagoryList.length !== 0){
-        console.log(`********${this.catagoryList}`)
+        // console.log(`********${this.catagoryList}`)
         return this.catagoryList[this.currentCatagoryIndex].sub_categories
       }
     },
@@ -229,6 +238,9 @@ export default {
       this.$store.commit('SETGEOHASH',addhash)
       this.getData()
     },
+    checkCategoryItem(item){
+      console.log(item)
+    },
     async getData(){
       // latitude,longitude
       const str = this.geohash.split(',')
@@ -238,8 +250,9 @@ export default {
       this.deliveryList = await deliveryMethods(latitude,longitude)
       this.activityList = await shopAcitvies(latitude,longitude)
     },
-    checkedCategory(index){
+    checkedCategory(index,id){
       this.currentCatagoryIndex = index
+      this.restaurant_category_id = id
     },
      showtitle() {
       if (this.show[0]) {
@@ -271,13 +284,15 @@ export default {
       }
       this.sortType = node.getAttribute('data')
     },
+    // 配送方式
     deliveryCheck(event,id){
       event.target.classList.toggle('active')
-      this.delivery_mode = id
+      if(this.delivery_mode.indexOf(id)!==-1){
+        this.delivery_mode.push(id)
+      }
     },
     shopActive(event,id){
       const flag = this.activities_ids.includes(id)
-      console.dir(event)
       if(flag){
         const index = this.activities_ids.indexOf(id)
         this.activities_ids.splice(index,1)
@@ -285,6 +300,7 @@ export default {
       }else{
         this.activities_ids.push(id)
         event.target.classList.add('active')
+        this.support_ids.push(id)
       }
     }
   },
@@ -320,6 +336,9 @@ export default {
   div {
     flex: 1;
   }
+}
+.shoplist{
+  margin-top: (-4 / @baseSize);
 }
 .list {
   position: fixed;

@@ -1,37 +1,92 @@
 <template>
+<!-- 修改密码成功  弹框  跳转到登录页面 -->
   <div>
-    <header>
-      <span>ele.me</span>
-      <span>登录|注册</span>
-    </header>
+    <myHeader goBack="true">
+      <template v-slot:title>
+        重置密码
+      </template>
+    </myHeader>
     <form action="">
       <section>
-        <input type="text" placeholder="账号" />
+        <input type="text" placeholder="账号" v-model="form.username"/>
       </section>
       <section>
-        <input type="text" placeholder="旧密码" />
+        <input type="text" placeholder="旧密码" v-model="form.oldpassWord"/>
       </section>
       <section>
-        <input type="text" placeholder="请输入新密码" />
+        <input type="text" placeholder="请输入新密码" v-model="form.newpassword"/>
       </section>
       <section>
-        <input type="text" placeholder="请确认密码" />
+        <input type="text" placeholder="请确认密码" v-model="form.confirmpassword"/>
       </section>
       <section>
-        <input type="text" placeholder="验证码" />
+        <input type="text" placeholder="验证码" v-model="form.captcha_code"/>
         <div class="code">
-          <img src="" alt="" />
+          <img :src="codeImg" v-if="codeImg" alt="" />
           <p>看不清</p>
-          <p>换一张</p>
+          <p @click="getCode">换一张</p>
         </div>
       </section>
     </form>
-    <div class="loginup">确认修改</div>
+    <div class="loginup" @click="changepassword">确认修改</div>
+    <alertText v-if="alertShow" :alertValue="alertValue" @changeShow="changeShow"/>
   </div>
 </template>
 
 <script>
-export default {};
+import {code,modify} from '@/service/getData.js'
+import alertText from '../../components/alertText/index.vue'
+import myHeader from '@/components/header/myHeader.vue'
+export default {
+  data(){
+    return {
+      form:{
+        username:'',
+        oldpassWord:'',
+        newpassword:'',
+        confirmpassword:'',
+        captcha_code:''
+      },
+      codeImg:'',
+      alertShow:false,
+      alertValue:'',
+      flag:false
+    }
+  },
+  components:{alertText,myHeader},
+  mounted(){
+    this.getCode()
+  },
+  methods:{
+    async getCode(){
+      const result =await code()
+      this.codeImg = result.code
+    },
+    async changepassword(){
+      if(/^1[0-9]{10}$/.test(this.form.username)){
+        const result = await modify(this.form)
+        if(result.status == 1){
+          this.alertValue = result.success
+          this.flag = true
+        }else{
+          this.alertValue = result.message
+          this.flag = false
+        }
+      }else{
+        this.alertValue = '请输入正确的用户名'
+        this.flag = false
+      }
+      this.alertShow = true
+    },
+    changeShow(value){
+      this.alertShow = value
+      if(this.flag){
+        this.form = {}
+        this.$router.push('/login')
+      }
+    }
+  }
+};
 </script>
 
 <style scoped lang="less">
@@ -39,7 +94,7 @@ export default {};
 @baseSize:4.14vw;
 form{
     // height: (165 / @baseSize);
-    margin-top: (10 / @baseSize);
+    margin-top: (60 / @baseSize);
     section{
         position: relative;
         input{
@@ -86,7 +141,6 @@ form{
                 left: 0;
                 width: (90 / @baseSize);
                 height: (38 / @baseSize);
-                background-color: pink;
             }
             p{
                 position: absolute;

@@ -33,12 +33,12 @@ const getStyleLoaders = (pre) => {
 
 module.exports = {
     entry: "./src/main.js",
-    output: {
-        path: undefined,
-        filename: "static/js/[name].js",
-        chunkFilename: "static/js/[name].chunk.js",
-        assetModuleFilename: "static/media/[hash:10][ext][query]",
-    },
+    // output: {
+    //     path: undefined,
+    //     filename: "static/js/[name].js",
+    //     chunkFilename: "static/js/[name].chunk.js",
+    //     assetModuleFilename: "static/media/[hash:10][ext][query]",
+    // },
     module: {
         rules: [
             // 处理css
@@ -139,10 +139,10 @@ module.exports = {
         port: 3000,
         open: true, //自动开启服务器
         hot: true, // 开启HMR
-        historyApiFallback: true, // 解决前端路由刷新404问题
+        historyApiFallback: true, // 解决前端路由刷新404问题   告诉webpack-dev-server在出现404错误时将请求重定向到入口文件，以便前端路由可以正确处理这些请求
         proxy: {
             context: ['/v1', '/v2', '/v3', '/v4', '/shopping', '/ugc', '/bos', '/member', '/img', '/payapi', '/eus', '/promotion'],
-            target: 'https://elm.cangdu.org',
+            target: 'http://localhost:8001',
             changeOrigin: true,
         }
     },

@@ -6,7 +6,7 @@
     <div class="main">
       <nav>为账户<strong>1783285966</strong>购买会员</nav>
       <dl class="special">
-        <dt><span>会员特权</span><span>会员说明 ></span></dt>
+        <router-link to="/vipcard/vipdesc" class="dt"><span>会员特权</span><span>会员说明 ></span></router-link>
         <dd>
           <span></span>
           <hgroup>
@@ -24,15 +24,16 @@
           </hgroup>
         </dd>
       </dl>
-      <dl class="open">
+      <router-link to="/vipcard/buyvip" class="open">
         <dt>开通会员</dt>
         <dd><span>1个月<strong>￥20</strong></span><span class="buy">购买</span></dd>
-      </dl>
-      <dl class="other">
-        <dd><span>兑换会员</span> <span>使用卡号卡密 ></span></dd>
-        <dd><span>购买记录</span><span>开发票 ></span></dd>
-      </dl>
+      </router-link>
+      <section class="other">
+        <router-link class="dd" to="/vipcard/exchangeVip"><span>兑换会员</span> <span>使用卡号卡密 ></span></router-link>
+        <router-link class="dd" to="/vipcard/historyVip"><span>购买记录</span><span>开发票 ></span></router-link>
+      </section>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -45,6 +46,7 @@ export default {
 <style scoped lang="less">
 @baseSize:4.14vw;
 .main{
+    color:black;
     margin-top:(50 / @baseSize);
     text-align: left;
     nav{
@@ -58,7 +60,7 @@ export default {
       background: white;
     }
     .special{
-      dt{
+      dt,.dt{
         height: (52 / @baseSize);
         line-height: (52 / @baseSize);
         // background: pink;
@@ -105,15 +107,17 @@ export default {
       }
     }
     .open{
+      color:black;
       padding-left: (10 / @baseSize);
       dt{
         height: (52 / @baseSize);
         line-height: (52 / @baseSize);
+        background: white;
       }
       dd{
         height: (67 / @baseSize);
         line-height: (67 / @baseSize);
-        // border:1px solid black;
+        background: white;
         strong{
           color:#f60;
         }
@@ -131,12 +135,15 @@ export default {
       }
     }
     .other{
-      dd{
+      .dd{
         height: (52 / @baseSize);
         display: flex;
         justify-content: space-between;
         padding:0 (10 / @baseSize);
         line-height: (52 / @baseSize);
+        color:black;
+        background: white;
+        margin-top: 10px;
       }
     }
   }

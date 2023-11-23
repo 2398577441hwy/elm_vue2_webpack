@@ -1,9 +1,18 @@
 <template>
+<!-- 
+  1.登录后跳转到上一个页面
+  2.用户信息存储到store上，并进行持久化存储
+  2.进行账号（手机号）格式的验证
+  3.密码，验证码不能为空
+  4.封装弹框
+
+ -->
   <div>
-    <header>
-      <span>ele.me</span>
-      <span>登录|注册</span>
-    </header>
+    <myHeader goBack="true">
+      <template v-slot:title>
+        密码登录
+      </template>
+    </myHeader>
     <form action="">
       <section>
         <input type="text" placeholder="账号" v-model="loginInfo.username"/>
@@ -11,15 +20,18 @@
       <section>
         <input :type="showPassword ? 'text' : 'password'" placeholder="密码" v-model="loginInfo.password"/>
         <!-- change_to_right -->
-        <div class="circle_button" @click="changePs">
-          <div :class="{change_to_right:showPassword}"></div>
-          <span>abc</span>
+        <transition name="changeStatus">
+          <div class="circle_button" @click="changePs">
+          <div :class="showPassword ? 'change_to_right' :'original'"></div>
+          <span :class="showPassword ? 'change_to_right' :'original'">abc···</span>
         </div>
+        </transition>
+        
       </section>
       <section>
         <input type="text" placeholder="验证码" v-model="loginInfo.captcha_code"/>
         <div class="code" @click="changeCode">
-          <img :src="codeImg" alt="" />
+          <img :src="codeImg" alt="" v-if="codeImg"/>
           <p>看不清</p>
           <p>换一张</p>
         </div>
@@ -29,22 +41,34 @@
     <p>注册过的用户可凭账号密码登录</p>
     <div class="loginup" @click="loginup">登录</div>
     <router-link  to="/forget" href="#">重置密码?</router-link>
+    <transition name="alertTip">
+      <alertText v-if="alertShow" @changeShow="changeShow" :alertValue="alertValue"/>
+    </transition>
   </div>
 </template>
 
 <script>
 import {code,login} from '@/service/getData'
+import alertText from '../../components/alertText/index.vue'
+import myHeader from '@/components/header/myHeader.vue'
 export default {
   data(){
     return {
       codeImg:'',
       showPassword:false,
+      alertShow:false,
+      flag:false,
+      alertValue:'',
       loginInfo:{
         username:'',
         password:'',
         captcha_code:''
       }
     }
+  },
+  components: {
+    alertText,
+    myHeader
   },
   created(){
     this.getCode()
@@ -60,9 +84,33 @@ export default {
     changePs(){
       this.showPassword = !this.showPassword
     },
+    changeShow(value){
+      this.alertShow = value
+      if(this.flag){
+        this.loginInfo = {}
+        this.$router.back()
+      }
+    },
     async loginup(){
-      const result = await login(this.loginInfo.username,this.loginInfo.password,this.loginInfo.captcha_code)
-      console.log(result)
+       const reg = /^1[0-9]{10}$/
+      if(reg.test(this.loginInfo.username)){
+        const result = await login(this.loginInfo.username,this.loginInfo.password,this.loginInfo.captcha_code)
+        this.$store.state.userinfo = result
+        if(result.status == 0){
+          this.alertValue = result.message
+          this.alertShow = true
+          this.flag = false
+        }else{
+          this.alertValue = '登录成功'
+          this.$store.commit('SETUSERINFO',result)
+          this.alertShow = true
+          this.flag = true
+        }
+      }else{
+        this.alertValue = '请输入正确的用户名格式'
+        this.alertShow = true
+        this.flag = false
+      }
    }
   },
   mounted(){
@@ -72,11 +120,27 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '@/style/header.less';
 @baseSize:4.14vw;
+@keyframes move {
+  0%{
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX((26 / @baseSize));
+  }
+}
+
+@keyframes moveOrigin {
+    0%{
+    transform: translateX((26 / @baseSize));
+  }
+  100%{
+    transform: translateX(0);
+  }
+}
 form{
     // height: (165 / @baseSize);
-    margin-top: (10 / @baseSize);
+    margin-top: (60 / @baseSize);
     section{
         position: relative;
         input{
@@ -91,28 +155,31 @@ form{
             position: absolute;
             right: (15 / @baseSize);
             top:(15 / @baseSize);
-            div{
-                position: absolute;
-                width: (28 / @baseSize);
-                height: (28 / @baseSize);
-                right: (30 / @baseSize);
-                top:(-1.93 / @baseSize);
-                border-radius: 50%;
-                background-color: rgb(220, 216, 216);
-            }
-            .change_to_right{
-              position:absolute;
-              right: (0 / @baseSize);
-              transform: translateX(10px);
-            }
             span{
-                display: block;
-                width: (40 / @baseSize);
-                height:(20 / @baseSize) ;
-                top:(15 / @baseSize);
-                border-radius: (15 / @baseSize);
-                background-color: gray;
-                color:white;
+              color: white;
+              border-radius: (8 / @baseSize);
+              padding: 0 (3 / @baseSize);
+              &.original{
+                background: #ccc;
+              }
+              &.change_to_right{
+                background: #4cd964;
+              }
+            }
+            div{
+              position: absolute;
+              width: (28 / @baseSize);
+              height: (28 / @baseSize);
+              border-radius: 50%;
+              background:#f1f1f1;
+              top: (-3 / @baseSize);
+              &.change_to_right{
+                animation: move .3s forwards;
+              }
+              &.original{
+                left: (-5 / @baseSize);
+                animation: moveOrigin .3s forwards;
+              }
             }
         }
         .code{

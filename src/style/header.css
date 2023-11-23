@@ -1,5 +1,5 @@
 header {
-  width: 100vw;
+  width: 100%;
   height: 12.07729469vw;
   background-color: #3190e8;
   display: flex;
@@ -7,6 +7,12 @@ header {
   padding: 0 2.41545894vw;
   line-height: 12.07729469vw;
 }
-header span {
+header a,
+header span,
+header .myroute {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: white;
+  margin: 0;
 }

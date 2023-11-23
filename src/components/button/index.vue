@@ -4,14 +4,16 @@
       <p v-if="item.specifications.length > 0" class="guige">选规格</p>
       <p v-else class="num">
         <transition name="fade">
-          <span v-if="goodsNum > 0" @click="clearItemNum(item.item_id)">-</span>
+          <!--  -->
+          <span @click="clearItemNum()" v-if="goodsNum > 0">-</span>
         </transition>
         <transition name="fade-num">
+          <!--  -->
           <span v-if="goodsNum > 0">{{ goodsNum }}</span>
         </transition>
         <span
           @click="
-            addItemNum($event, item.item_id, item.name, item.satisfy_rate)
+            addItemNum($event, item)
           "
           >+</span
         >
@@ -21,64 +23,64 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 export default {
-  props: ["item", "moveDot"],
-  data() {
-    return {
-      // shopCartList:this.$store.state.shopCartList,
-      goodsNum: 0,
-    };
+  data(){
+    return{
+      currentFood:{}
+    }
   },
-  computed: {
-    ...mapState(["shopCartList"]),
+  created(){
+    const obj = {
+        shopid:this.$route.query.id,
+        category_id:this.item.category_id,
+        item_id:this.item.item_id,
+        food_id:this.item.specfoods[0].food_id,
+        name:this.item.specfoods[0].name,
+        price:this.item.specfoods[0].price,
+        specs:this.item.specfoods[0].specs,
+        packing_fee:this.item.specfoods[0].packing_fee,
+        sku_id:this.item.specfoods[0].sku_id,
+        stock:this.item.specfoods[0].stock
+      }
+      this.currentFood = obj
   },
-  watch: {
-    shopCartList: {
-      deep: true,
-      handler(newvalue) {
-        let flag = false
-        newvalue.forEach((element) => {
-          if (element.id === this.item.item_id) {
-            flag = true
-            this.goodsNum = element.num;
-          }
-        });
-        if(!flag) this.goodsNum = 0
-      },
+  props: ["item", "moveDot","shopid"],
+  computed:{
+    ...mapState(['cartList']),
+    myCartList(){
+      // console.log('和仓库数据实时对应')
+      return this.cartList[this.shopid] || {}
     },
+    // 检测到myCartList变化时触发
+    goodsNum(){
+      const {category_id,item_id,food_id} = this.currentFood
+      if(this.myCartList&&this.myCartList[category_id]&&this.myCartList[category_id][item_id]){
+        const food = this.myCartList[category_id][item_id]
+        if(food[food_id]){
+          return food[food_id].num
+        }else{
+          return 0
+        }
+      }else{
+        return 0
+      }
+    }
   },
   methods: {
-    clearItemNum(item_id) {
-      this.$store.commit('DELETECARTLIST',item_id)
+    clearItemNum() {
+      this.$store.commit('REDUCEMYCART',this.currentFood)
     },
-
-    addItemNum(event, item_id, name, satisfy_rate) {
+    // 添加food到仓库
+    addItemNum(event,item) {
+      // 直接加
       const elLeft = event.target.getBoundingClientRect().left;
       const elTop = event.target.getBoundingClientRect().top;
       this.moveDot.push(true);
       this.$bus.$emit("dotPostion", elLeft, elTop, this.moveDot);
-      const obj = {
-        // id
-        id: item_id,
-        name,
-        price: satisfy_rate,
-        // packing_fee:null,
-        // sku_id:null,
-        // specs:null,
-        // stock:null,
-      };
-      let flag = false;
-      this.shopCartList.forEach((element) => {
-        if (element.id === obj.id) {
-          flag = true;
-          this.$set(obj, "num", element.num + 1);
-        }
-      });
-      if (!flag) {
-        this.$set(obj, "num", 1);
-      }
-      this.$store.commit("ADD_CART", obj);
+      console.log(this.currentFood)
+      this.$store.commit('ADD_CART',this.currentFood)
+      this.$emit('updataMyCart')
     },
   },
 };

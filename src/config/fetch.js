@@ -31,10 +31,11 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 		}
 		
 		try {
-			console.log(url,requestConfig)
+			// console.log(url,requestConfig)
 			const response = await fetch(url, requestConfig);
+			console.log(response)
 			const responseJson = await response.json();
-			console.log(responseJson)
+			// console.log(responseJson)
 			return responseJson
 		} catch (error) {
 			throw new Error(error)

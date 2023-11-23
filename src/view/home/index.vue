@@ -1,11 +1,8 @@
 <template>
   <div>
     <myHeader>
-      <router-link to="search" slot="go">
+      <router-link to="search" slot="go" style="position:absolute; width:25px;height:30px;">
         <svg
-          width="100%"
-          height="100%"
-          style="margin-left: 15%; margin-bottom: -12%"
           xmlns="http://www.w3.org/2000/svg"
           version="1.1"
         >
@@ -27,10 +24,10 @@
         </svg>
       </router-link>
 
-      <template v-slot:title> 这是主页标题 </template>
+      <template v-slot:title> {{title}} </template>
 
-      <router-link to="profile" slot="more">
-        <svg width="70%" height="70%" style="margin-bottom: 15%">
+      <router-link to="profile" slot="more" style="position:absolute;right:10px;top:3px;">
+        <svg width="25px" height="25px">
           <use
             xmlns:xlink="http://www.w3.org/1999/xlink"
             xlink:href="#user"
@@ -48,7 +45,8 @@
         <div class="swiper-slide" v-for="(list, index) in navList" :key="index">
           <ul>
             <li v-for="item in list" :key="item.id" @click="goSortShop(item)">
-              <img :src="imgBaseUrl + item.image_url" alt="" /><span>{{
+              <img :src="imgBaseUrl + item.image_url" alt="" />
+              <span>{{
                 item.title
               }}</span>
             </li>
@@ -92,6 +90,7 @@ export default {
       imgBaseUrl: "https://fuss10.elemecdn.com", //图片域名地址,
       local: null,
       hasLocal: false, //是否已经获取地理位置，成功之后再获取商铺信息
+      title:'这是主页标题',
     };
   },
   computed: {
@@ -104,14 +103,15 @@ export default {
     } else {
       this.getAdd();
     }
-    
+    if(this.$route.query.address){
+      this.title = this.$route.query.address
+    }
   },
   methods: {
     async getData() {
       // 处理导航数据
       let navList = await homenav(this.geohash);
       let tt = []
-      console.log(navList.length)
       for(let i = 0,j = 0; i <= navList.length; j++,i += 8){
         tt[j] = navList.splice(0,8)
       }

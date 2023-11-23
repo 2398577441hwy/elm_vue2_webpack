@@ -1,13 +1,18 @@
 @baseSize:4.14vw;
 header{
-    width: (414 / @baseSize);
+    // position: fixed;
+    width:100%;
     height: (50 / @baseSize);
     background-color:#3190e8;
     display: flex;
     justify-content: space-between;
     padding:0 (10 / @baseSize);
     line-height: (50 / @baseSize);
-    span{
+    a,span,.myroute{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         color:white;
+        margin: 0;
     }
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button>替换</button>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+    </ul>
+    <script>
+        document.addEventListener('click',()=>{
+            const result=['小红','小明','小小']
+            const contain = document.querySelector('ul')
+            contain.innerHTML = result.map(item=>`<li class="button">${item}<button class="item">${item}</button></li>`).join('')
+        })
+        document.querySelector('ul').addEventListener('click',(e)=>{
+            // console.dir()
+            if(e.target.className==='item'){
+                console.log(e.target.innerText)
+            }
+            
+        })
+
+    </script>
+</body>
+</html>
