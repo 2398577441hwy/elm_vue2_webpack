@@ -10,7 +10,8 @@
       <li class="avatar">
         <p>头像</p>
         <span class="avatarimg"
-          ><img :src="avatar" /><svg
+          ><input type="file" @change="changeImg" ref="input">
+          <img :src="avatar" /><svg
             width="20"
             height="20"
             data-v-c2d94162=""
@@ -114,6 +115,12 @@ export default {
     loginOut() {
       
       this.markShow = true;
+    },
+    changeImg(){
+      // console.dir(this.$refs['input'].files[0])
+      const data = new FormData()
+      data.append('file',this.$refs['input'].files[0])
+      console.log(data)
     },
     notSure(){
       this.markShow = false
@@ -239,6 +246,16 @@ export default {
     .avatarimg {
       position: relative;
       width: 80px;
+      input{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        // border: 1px solid red;
+        z-index: 100;
+      }
       img {
         position: absolute;
         top: 10px;

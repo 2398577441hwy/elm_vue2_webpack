@@ -9,7 +9,7 @@
         ></use>
       </svg>
     </section>
-   <div class="mark" :style="{width:(score / 5)*20 + 'vw'}">
+   <div class="starMark" :style="{width:(score / 5)*20 + 'vw'}">
      <section data-v-5df6cab1="" class="star_container">
       <svg
         data-v-5df6cab1=""
@@ -31,16 +31,11 @@
 <script>
 export default {
   props:['score'],
-  // data() {
-  //   return {
-  //     score: 3.6,
-  //   };
-  // },
 };
 </script>
 
 <style scoped lang="less">
-.mark{
+.starMark{
     position: relative;
     width: 4vw;
     height: 4vw;

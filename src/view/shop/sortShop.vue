@@ -72,7 +72,7 @@
             </li>
           </ul>
           <ul class="title2">
-            <li v-for="(item,index) in currentCatagory" :key="index" @click="restaurant_category_ids = item.id"><span>{{item.name}}</span> <span>{{item.count}}</span></li>
+            <li v-for="(item,index) in currentCatagory" :key="index" @click="restaurant_category_ids = item.id;show=[false,false,false]"><span>{{item.name}}</span> <span>{{item.count}}</span></li>
           </ul>
         </div>
         <ul class="sort" v-show="show[1]" @click="sortMethods($event)">
@@ -170,10 +170,11 @@
               </ul>
             </dd>
           </dl>
+          <p class="button"><span @click="show=[false,false,false];delivery_mode=[];support_ids=[];sure=true">清空</span><span @click="sure=true;show=[false,false,false]">确定</span></p>
         </div>
       </div>
     </transition>
-    <shopList :geohash="geohash" class="shoplist" :restaurant_category_id="restaurant_category_id" :restaurant_category_ids="restaurant_category_ids" :order_by="order_by" :delivery_mode="delivery_mode" :support_ids="support_ids"></shopList>
+    <shopList :geohash="geohash" class="shoplist" :restaurant_category_id="restaurant_category_id" :restaurant_category_ids="restaurant_category_ids" :order_by="order_by" :delivery_mode="delivery_mode" :support_ids="support_ids" :sure="sure" @changeSure='sure=false'></shopList>
   </div>
 </template>
 
@@ -193,13 +194,14 @@ export default {
       currentCatagoryIndex:0,
       sortType:4,
       activities_ids: [],
+      sure:false,
       geohash:this.$route.query.geohash || this.$store.state.geohash,
       // 食品类型id
       restaurant_category_id:'',
       // 筛选类型id
       restaurant_category_ids:'',
       // 何种方式排序
-      order_by:'',
+      order_by:4,
       // 选中的配送方式
       delivery_mode:[],
       // 选中商品活动列表
@@ -212,7 +214,6 @@ export default {
     currentCatagory(){
       //  || []
       if(this.catagoryList.length !== 0){
-        // console.log(`********${this.catagoryList}`)
         return this.catagoryList[this.currentCatagoryIndex].sub_categories
       }
     },
@@ -221,10 +222,8 @@ export default {
          return this.show.includes(true);
       }
     },
-    // ...mapState(['geohash'])
   },
   mounted(){
-    // console.log(this.geohash)
     if(!this.geohash){
       this.getGeohash()
     }else{
@@ -282,13 +281,20 @@ export default {
       }else{
         node = event.target
       }
-      this.sortType = node.getAttribute('data')
+      this.order_by = node.getAttribute('data')
+      this.sortType = this.order_by
+      this.show = [false,false,false]
     },
     // 配送方式
     deliveryCheck(event,id){
       event.target.classList.toggle('active')
-      if(this.delivery_mode.indexOf(id)!==-1){
+      // 不存在则加进去
+      if(this.delivery_mode.indexOf(id)==-1){
         this.delivery_mode.push(id)
+      }else{
+        // 存在则删除
+        const index = this.delivery_mode.indexOf(id)
+        this.delivery_mode.splice(index,1)
       }
     },
     shopActive(event,id){
@@ -296,6 +302,7 @@ export default {
       if(flag){
         const index = this.activities_ids.indexOf(id)
         this.activities_ids.splice(index,1)
+        this.support_ids.splice(index,1)
         event.target.classList.remove('active')
       }else{
         this.activities_ids.push(id)
@@ -324,6 +331,28 @@ export default {
 .list-enter-active,.list-leave-active {
   transition: transform 0.55s linear;
 }
+.button{
+  display: flex;
+  justify-content: space-around;
+  padding-top: (5 / @baseSize);
+  padding-bottom: (10 / @baseSize);
+  background: #eee;
+  span{
+    width: 40%;
+    height: (40 / @baseSize);
+    text-align: center;
+    border-radius: (10 / @baseSize);
+    margin:0 (10 / @baseSize);
+    font-weight: bold;
+    &:first-child{
+      background:white;
+    }
+    &:last-child{
+      background: #56d176;
+      color: white;
+    }
+  }
+}
 .nav {
   position: relative;
   z-index: 2;
@@ -350,7 +379,7 @@ export default {
     .title1 {
       width: 50%;
       font-size: (14 / @baseSize);
-      max-height: (415 / @baseSize);
+      max-height: (425 / @baseSize);
       overflow: auto;
       float: left;
       background: #f1f1f1;

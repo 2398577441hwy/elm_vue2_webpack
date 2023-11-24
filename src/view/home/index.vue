@@ -1,11 +1,12 @@
 <template>
   <div>
     <myHeader>
-      <router-link to="search" slot="go" style="position:absolute; width:25px;height:30px;">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          version="1.1"
-        >
+      <router-link
+        to="search"
+        slot="go"
+        style="position: absolute; width: 25px; height: 30px"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
           <circle
             cx="8"
             cy="8"
@@ -24,9 +25,13 @@
         </svg>
       </router-link>
 
-      <template v-slot:title> {{title}} </template>
+      <template v-slot:title> {{ title }} </template>
 
-      <router-link to="profile" slot="more" style="position:absolute;right:10px;top:3px;">
+      <router-link
+        to="profile"
+        slot="more"
+        style="position: absolute; right: 10px; top: 3px"
+      >
         <svg width="25px" height="25px">
           <use
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -46,14 +51,12 @@
           <ul>
             <li v-for="item in list" :key="item.id" @click="goSortShop(item)">
               <img :src="imgBaseUrl + item.image_url" alt="" />
-              <span>{{
-                item.title
-              }}</span>
+              <span>{{ item.title }}</span>
             </li>
           </ul>
         </div>
       </div>
-      
+
       <div class="swiper-pagination"></div>
     </div>
     <div class="store">
@@ -90,7 +93,7 @@ export default {
       imgBaseUrl: "https://fuss10.elemecdn.com", //图片域名地址,
       local: null,
       hasLocal: false, //是否已经获取地理位置，成功之后再获取商铺信息
-      title:'这是主页标题',
+      title: "这是主页标题",
     };
   },
   computed: {
@@ -103,27 +106,27 @@ export default {
     } else {
       this.getAdd();
     }
-    if(this.$route.query.address){
-      this.title = this.$route.query.address
+    if (this.$route.query.address) {
+      this.title = this.$route.query.address;
     }
   },
   methods: {
     async getData() {
       // 处理导航数据
       let navList = await homenav(this.geohash);
-      let tt = []
-      for(let i = 0,j = 0; i <= navList.length; j++,i += 8){
-        tt[j] = navList.splice(0,8)
+      let tt = [];
+      for (let i = 0, j = 0; i <= navList.length; j++, i += 8) {
+        tt[j] = navList.splice(0, 8);
       }
-      this.navList = tt
-      if(this.navList){
+      this.navList = tt;
+      this.$nextTick(() => {
         new Swiper(".swiper-container", {
-          autoplay:true,
+          // autoplay:true,
           pagination: {
             el: ".swiper-pagination",
           },
         });
-      }
+      });
     },
     async getAdd() {
       this.local = await cityGuess();
@@ -132,26 +135,27 @@ export default {
       this.hasLocal = true;
       this.getData();
     },
-    goSortShop(item){
+    goSortShop(item) {
       // console.log(this.$route)  restaurant_category_id   ??????
-      const url = item.link
-      let hwy = ''
-      let urlData = decodeURIComponent(url.split('=')[1].replace('&target_name',''))
+      const url = item.link;
+      let hwy = "";
+      let urlData = decodeURIComponent(
+        url.split("=")[1].replace("&target_name", "")
+      );
       if (/restaurant_category_id/gi.test(urlData)) {
-    			hwy = JSON.parse(urlData).restaurant_category_id.id
-    		}else{
-    			hwy = ''
-    		}
+        hwy = JSON.parse(urlData).restaurant_category_id.id;
+      } else {
+        hwy = "";
+      }
       this.$router.push({
-        path:'/sortShop',
-        query:{
-          geohash:this.geohash,
-          title:item.title,
-          restaurant_category_id:hwy,
-        }
-      })
-      
-    }
+        path: "/sortShop",
+        query: {
+          geohash: this.geohash,
+          title: item.title,
+          restaurant_category_id: hwy,
+        },
+      });
+    },
   },
 };
 </script>

@@ -2,9 +2,13 @@
   <div>
     <div class="store-bd" v-if="!loadingShow">
       <ul>
-        <li v-for="item in goodsList" :key="item.id" @click="goShop(item.id,item.name)">
+        <li
+          v-for="item in goodsList"
+          :key="item.id"
+          @click="goShop(item.id, item.name)"
+        >
           <!-- <img :src="'/img/' + item.image_path" alt="" /> -->
-          <img src="@/asset/img/1.webp" alt="">
+          <img src="@/asset/img/1.webp" alt="" />
           <hgroup>
             <header>
               <h5>{{ item.name }}</h5>
@@ -36,22 +40,73 @@
         </li>
       </ul>
     </div>
-    <loading :show="loadingShow"/>
+    <loading :show="loadingShow" />
   </div>
 </template>
 
 <script>
 import { homelist } from "@/service/getData.js";
-import loading from '@/components/loading/index.vue'
+import loading from "@/components/loading/index.vue";
 export default {
   data() {
     return {
       goodsList: [],
-      loadingShow:true
+      loadingShow: true,
     };
   },
-  components:{loading},
-  props: ["geohash"],
+  components: { loading },
+  props: {
+    geohash:{
+      type:String,
+      default:''
+    },
+    restaurant_category_id: {
+      type:[String,Number],
+      default:''
+      },
+      restaurant_category_ids:{
+        type:[String,Number],
+        default:''
+      },
+      order_by:{
+        type:[String,Number],
+        default:''
+      },
+      delivery_mode:{
+        type:Array,
+        default(){return []}
+      },
+      support_ids:{
+        type:Array,
+        default(){return []}
+      },
+      sure:{
+        type:Boolean,
+        default:false
+      }
+    },
+    watch:{
+      restaurant_category_id:{
+        handler(value){
+          if(value) this.getData()
+        }
+      },
+      restaurant_category_ids:{
+        handler(value){
+          if(value) this.getData()
+        }
+      },
+      order_by:{
+        handler(value){
+          this.getData()
+        }
+      },
+      sure:{
+        handler(value){
+          if(value) this.getData()
+        }
+      }
+    },
   mounted() {
     this.getData();
   },
@@ -60,11 +115,12 @@ export default {
       const str = this.geohash.split(",");
       const latitude = str[0];
       const longitude = str[1];
-      this.goodsList = await homelist(latitude, longitude);
-      this.loadingShow = false
+      this.goodsList = await homelist(latitude, longitude,0,this.restaurant_category_id,this.restaurant_category_ids,this.order_by,this.delivery_mode,this.support_ids);
+      this.$emit('changeSure',false)
+      this.loadingShow = false;
     },
-    goShop(id,name) {
-      this.$store.state.shopinfo={id,name}
+    goShop(id, name) {
+      this.$store.state.shopinfo = { id, name };
       this.$router.push({
         path: "/shop",
         query: {

@@ -42,188 +42,228 @@
     </header>
     <nav class="storenav">
       <span></span>
-      <span :class="{active:currentTag==='food'}" @click="changeTag('food')">商品</span>
+      <span
+        :class="{ active: currentTag === 'food' }"
+        @click="changeTag('food')"
+        >商品</span
+      >
       <span></span>
       <span></span>
-      <span :class="{active:currentTag==='rating'}" @click="changeTag('rating')">评价</span>
+      <span
+        :class="{ active: currentTag === 'rating' }"
+        @click="changeTag('rating')"
+        >评价</span
+      >
       <span></span>
     </nav>
 
-    <div class="food" v-show="!showTag&&!loadingShow">
+    <div class="food" v-show="!showTag && !loadingShow">
       <div class="storemain">
-      <ul class="column">
-        <li
-          v-for="item in shopDetailList"
-          :key="item.id"
-          @click="navTarget(item.id)"
-          :class="{ active: item.id === currentId }"
-          :ref="item.id"
-        >
-          {{ item.name }}
-        </li>
-      </ul>
-      <div class="detail" ref="detail" @scroll="location()">
-        <div class="offsetparent" style="position: relative">
-          <dl
-            v-for="list in shopDetailList"
-            :key="list.id"
-            :ref="list.id"
-            :class="list.id === currentId ? 'active' : ''"
-          >
-            <!-- :class="list.id === currentId ? 'active' : ''" -->
-            <dt :class="list.id === currentId ? 'active' : ''">
-              {{ list.name }} <span>{{ list.description }}</span>
-            </dt>
-
-            <dd v-for="item in list.foods" :key="item.id">
-              <div class="img">
-                <span class="logo"></span>
-                <img src="@/asset/img/1.webp" alt="" />
-              </div>
-              <hgroup>
-                <strong>{{ item.name }}</strong>
-                <span
-                  class="sign"
-                  v-for="(attr, index) in item.attributes"
-                  :key="index"
-                  v-show="item.attributes.length > 0 && attr !== null"
-                  >招聘</span
-                >
-                <p class="des">{{ item.description }}</p>
-                <p>{{ item.tips }}</p>
-                <span class="flag">{{ item.item_id }}</span>
-                <div class="footer">
-                  <span
-                    ><span class="price">￥{{ item.specfoods[0].price }}</span
-                    >起</span
-                  >
-                  <myButton
-                    :item="item"
-                    :moveDot="moveDot"
-                    @updataMyCart="updataMyCart(item)"
-                    :shopid="$route.query.id"
-                  ></myButton>
-                </div>
-              </hgroup>
-            </dd>
-          </dl>
+        <div ref="columnContain" class="columnContain">
+          <ul class="column">
+            <li
+              v-for="(item,index) in shopDetailList"
+              :key="index"
+              @click="navTarget(index)"
+              :class="{ active: index === currentIndex }"
+              :ref="item.id"
+            >
+              {{ item.name }}
+            </li>
+          </ul>
         </div>
+        <div class="detail" ref="detail">
+          <div class="offsetparent" style="position: relative">
+            <dl
+              v-for="(list,index) in shopDetailList"
+              :key="list.id"
+              :ref="list.id"
+              :class="index === currentIndex ? 'active' : ''"
+            >
+              <!-- :class="list.id === currentId ? 'active' : ''" -->
+              <dt :class="index === currentIndex ? 'active' : ''">
+                {{ list.name }} <span>{{ list.description }}</span>
+              </dt>
+
+              <dd v-for="item in list.foods" :key="item.id">
+                <div class="img">
+                  <span class="logo"></span>
+                  <img src="@/asset/img/1.webp" alt="" />
+                </div>
+                <hgroup>
+                  <strong>{{ item.name }}</strong>
+                  <span
+                    class="sign"
+                    v-for="(attr, index) in item.attributes"
+                    :key="index"
+                    v-show="item.attributes.length > 0 && attr !== null"
+                    >招聘</span
+                  >
+                  <p class="des">{{ item.description }}</p>
+                  <p>{{ item.tips }}</p>
+                  <span class="flag">{{ item.item_id }}</span>
+                  <div class="footer">
+                    <span
+                      ><span class="price">￥{{ item.specfoods[0].price }}</span
+                      >起</span
+                    >
+                    <myButton
+                      :item="item"
+                      :moveDot="moveDot"
+                      @updataMyCart="updataMyCart(item)"
+                      :shopid="$route.query.id"
+                    ></myButton>
+                  </div>
+                </hgroup>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="cartfooter">
+        <!-- cartlist -->
+        <transition name="list">
+          <dl class="cartlist" v-show="show">
+            <dt>
+              <p>购物车</p>
+              <p @click="clearMyCart">
+                <svg data-v-c8684834="">
+                  <use
+                    data-v-c8684834=""
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    xlink:href="#cart-remove"
+                  ></use>
+                </svg>
+                清空
+              </p>
+            </dt>
+            <div class="cartmain">
+              <dd v-for="item in myShopCart" :key="item.id">
+                <h3>{{ item.name }}</h3>
+                <div class="price">
+                  ￥<strong>{{ item.price * item.num }}</strong>
+                </div>
+                <div class="svg">
+                  <svg
+                    data-v-c8684834=""
+                    fill="#3190e8"
+                    @click="reduceFood(item)"
+                  >
+                    <use
+                      data-v-c8684834=""
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      xlink:href="#cart-minus"
+                    ></use>
+                  </svg>
+                  <div class="cart_num">{{ item.num }}</div>
+                  <svg
+                    data-v-c8684834=""
+                    class="cart_add"
+                    fill="#3190e8"
+                    @click="addFood(item)"
+                  >
+                    <use
+                      data-v-c8684834=""
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      xlink:href="#cart-add"
+                    ></use>
+                  </svg>
+                </div>
+              </dd>
+            </div>
+          </dl>
+        </transition>
+        <transition name="bounce">
+          <div
+            :class="allnum === 0 ? 'outline' : 'outline active'"
+            ref="cart"
+            @click="show = !show"
+          >
+            <div :class="allnum === 0 ? 'maincolor' : 'maincolor active'">
+              <svg data-v-c8684834="" class="cart_icon">
+                <use
+                  data-v-c8684834=""
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  xlink:href="#cart-icon"
+                ></use>
+              </svg>
+            </div>
+            <span v-show="allnum !== 0" class="flag">{{ allnum }}</span>
+          </div>
+        </transition>
+        <hgroup>
+          <h3>￥{{ allprice }}</h3>
+          <p>配送费￥5</p>
+        </hgroup>
+        <button :class="allprice >= 20 ? 'active' : ''" @click="goConfirmOrder">
+          {{ title }}
+        </button>
       </div>
     </div>
 
-    <div class="cartfooter">
-      <!-- cartlist -->
-      <transition name="list">
-        <dl class="cartlist" v-show="show">
-          <dt>
-            <p>购物车</p>
-            <p @click="clearMyCart">
-              <svg data-v-c8684834="">
-                <use
-                  data-v-c8684834=""
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  xlink:href="#cart-remove"
-                ></use>
-              </svg>
-              清空
-            </p>
-          </dt>
-          <div class="cartmain">
-            <dd v-for="item in myShopCart" :key="item.id">
-            <h3>{{ item.name }}</h3>
-            <div class="price">
-              ￥<strong>{{ item.price * item.num }}</strong>
-            </div>
-            <div class="svg">
-              <svg data-v-c8684834="" fill="#3190e8" @click="reduceFood(item)">
-                <use
-                  data-v-c8684834=""
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  xlink:href="#cart-minus"
-                ></use>
-              </svg>
-              <div class="cart_num">{{ item.num }}</div>
-              <svg data-v-c8684834="" class="cart_add" fill="#3190e8" @click="addFood(item)">
-                <use
-                  data-v-c8684834=""
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  xlink:href="#cart-add"
-                ></use>
-              </svg>
-            </div>
-          </dd>
-          </div>
-        </dl>
-      </transition>
-      <transition name="bounce">
-        <div
-          :class="allnum === 0 ? 'outline' : 'outline active'"
-          ref="cart"
-          @click="show = !show"
-        >
-          <div :class="allnum === 0 ? 'maincolor' : 'maincolor active'">
-            <svg data-v-c8684834="" class="cart_icon">
-              <use
-                data-v-c8684834=""
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                xlink:href="#cart-icon"
-              ></use>
-            </svg>
-          </div>
-          <span v-show="allnum !== 0" class="flag">{{ allnum }}</span>
-        </div>
-      </transition>
-      <hgroup>
-        <h3>￥{{ allprice }}</h3>
-        <p>配送费￥5</p>
-      </hgroup>
-      <button :class="allprice >= 20 ? 'active' : ''" @click="goConfirmOrder">
-        {{ title }}
-      </button>
-    </div>
-    </div>
-
-    <div class="rating" v-show="showTag&&!loadingShow">
+    <div class="rating" v-show="showTag && ratingList.length != 0">
       <!-- 外壳 需要有高度 -->
       <div class="ratingmain" ref="ratingmain">
-        <div>
-        <header>
-          <div class="ratingleft">
-            <!-- ratingScore.overall_score.toFixed(1) -->
-            <p>{{Number.parseFloat(ratingScore.overall_score).toFixed(1)}}</p>
-            <p>综合评价</p>
-            <p>高于周边商家{{ratingScore.compare_rating*100}}%</p>
-          </div>
-          <div class="ratingright">
-            <p>服务态度 <myStar class="mystar" :score="ratingScore.service_score"/></p>
-            <p>菜品评价 <myStar class="mystar" :score="ratingScore.food_score"/></p>
-            <p>送达时间</p>
-          </div>
-        </header>
+        <div class="inner">
+          <header>
+            <div class="ratingleft">
+              <!-- ratingScore.overall_score.toFixed(1) -->
+              <p>
+                {{ Number.parseFloat(ratingScore.overall_score).toFixed(1) }}
+              </p>
+              <p>综合评价</p>
+              <p>高于周边商家{{ ratingScore.compare_rating * 100 }}%</p>
+            </div>
+            <div class="ratingright">
+              <p>
+                服务态度
+                <myStar class="mystar" :score="ratingScore.service_score" />
+              </p>
+              <p>
+                菜品评价
+                <myStar class="mystar" :score="ratingScore.food_score" />
+              </p>
+              <p>送达时间</p>
+            </div>
+          </header>
 
-        <ul class="ratingTag">
-          <li v-for="(item,index) in ratingTag" :key="index">{{item.name}}({{item.count}})</li>
-        </ul>
+          <ul class="ratingTag">
+            <li v-for="(item, index) in ratingTag" :key="index">
+              {{ item.name }}({{ item.count }})
+            </li>
+          </ul>
 
-        <ul class="ratingMenu">
-          <li v-for="(item,index) in ratingList" :key="index">
-            <img class="avatar" :src="getImgPath(item.avatar)" alt="">
-            <section class="ratingContent">
-              <header>{{item.username}}</header>
-              <hgroup>
-                <div class="ratingstar">{{item.time_spent_desc}}<myStar class="hwyStar" :score="item.rating_star"/></div>
-                <main>
-                  <div class="group" v-for="(t,index) in item.item_ratings" :key="index">
-                    <img v-if="t.image_hash" :src="getImgPath(t.image_hash)" alt="">
-                    <p>{{t.food_name}}</p>
+          <ul class="ratingMenu">
+            <li v-for="(item, index) in ratingList" :key="index">
+              <img class="avatar" :src="getImgPath(item.avatar)" alt="" />
+              <section class="ratingContent">
+                <header>{{ item.username }}</header>
+                <hgroup>
+                  <div class="ratingstar">
+                    {{ item.time_spent_desc
+                    }}<myStar class="hwyStar" :score="item.rating_star" />
                   </div>
-                </main>
-              </hgroup>
-            </section>
-            <div class="timer">{{item.rated_at}}</div>
-          </li>
-        </ul>
-      </div>
+                  <main>
+                    <div
+                      class="group"
+                      v-for="(t, index) in item.item_ratings"
+                      :key="index"
+                    >
+                      <img
+                        v-if="t.image_hash"
+                        :src="getImgPath(t.image_hash)"
+                        alt=""
+                      />
+                      <p>{{ t.food_name }}</p>
+                    </div>
+                  </main>
+                </hgroup>
+              </section>
+              <div class="timer">{{ item.rated_at }}</div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <transition
@@ -243,19 +283,25 @@
         </svg>
       </span>
     </transition>
-       <Loading :show="loadingShow"/>
+    <Loading :show="loadingShow" />
   </div>
 </template>
 
 <script>
-import { shoplist,ratingCategory,ratingScore,ratingList,cityGuess } from "@/service/getData.js";
+import {
+  shoplist,
+  ratingCategory,
+  ratingScore,
+  ratingList,
+  cityGuess,
+} from "@/service/getData.js";
 import { mapState } from "vuex";
-import {getImgPath} from '@/mixin/mixin.js'
+import { getImgPath } from "@/mixin/mixin.js";
 import myButton from "@/components/button/index.vue";
 import cartFooter from "@/components/buy_cart/index.vue";
-import myStar from '@/components/star/index.vue'
-import Loading from '@/components/loading/index.vue'
-import BScroll from 'better-scroll';
+import myStar from "@/components/star/index.vue";
+import Loading from "@/components/loading/index.vue";
+import BScroll from "better-scroll";
 export default {
   data() {
     return {
@@ -274,18 +320,24 @@ export default {
       show: false, //控制购物车的动画效果
       currentFood: {},
       firstCart: false,
-      receiveInCart:false,
-      currentTag:'food',
-      showTag:false,
-      ratingTag:[],
-      ratingScore:{},
-      ratingList:[],
-      loadingShow:true,
-      ratingreq:false,
-      ratingScroll:null
+      receiveInCart: false,
+      currentTag: "food",
+      showTag: false,
+      ratingTag: [],
+      ratingScore: {},
+      ratingList: [],
+      loadingShow: true,
+      ratingreq: false,
+      ratingScroll: null,
+      offset:0,
+      TopList:[],
+      currentIndex:0,
+      columnScroll:null,
+      detailScroll:null,
+      skilPosition:false
     };
   },
-  mixins:[getImgPath],
+  mixins: [getImgPath],
   computed: {
     allnum() {
       return this.myShopCart.reduce((pre, next) => {
@@ -313,7 +365,7 @@ export default {
   created() {
     this.updataMyCart();
   },
-  components: { myButton, cartFooter ,myStar,Loading},
+  components: {myButton, cartFooter, myStar, Loading },
   watch: {
     // 上来选中column的active
     shopDetailList: {
@@ -324,61 +376,76 @@ export default {
         this.currentId = newvalue[0].id;
       },
     },
-     receiveInCart: {
-        handler(value) {
-          if (value) {
-            console.log('receiveInCart:'+value);
-            this.$refs.cart.classList.add("cartoon");
-            if (this.cartTimer) {
-              clearTimeout(this.cartTimer);
-            }
-            this.cartTimer = setTimeout(() => {
-              this.$refs.cart.classList.remove("cartoon");
-              this.receiveInCart = false;
-            }, 600);
+    receiveInCart: {
+      handler(value) {
+        if (value) {
+          console.log("receiveInCart:" + value);
+          this.$refs.cart.classList.add("cartoon");
+          if (this.cartTimer) {
+            clearTimeout(this.cartTimer);
           }
-        },
+          this.cartTimer = setTimeout(() => {
+            this.$refs.cart.classList.remove("cartoon");
+            this.receiveInCart = false;
+          }, 600);
+        }
       },
+    },
+    ratingList: {
+      handler(value) {
+        if (value.length != 0) {
+          const ratingmain = this.$refs["ratingmain"];
+            this.$nextTick(() => {
+            this.ratingScroll = new BScroll(ratingmain, {
+              probeType: 3,
+              click: true,
+            });
+            this.ratingScroll.on("scroll", (pos) => {
+              if (
+                Math.abs(pos.y) + ratingmain.clientHeight >=
+                ratingmain.children[0].clientHeight - 50
+              ) {
+                if (!this.ratingreq) {
+                  this.offset += 10;
+                  this.getRatingData();
+                }
+              }
+            });
+          });
+        }
+      },
+    },
   },
   methods: {
-    changeTag(value){
-      this.currentTag = value
-      if(value === 'rating'){
-        this.showTag = true
-        const ratingmain = this.$refs['ratingmain']
-        this.$nextTick(()=>{
-          console.log('nextTick***********')
-          this.ratingScroll = new BScroll(ratingmain,{
-            probeType:3,
-            click:true
-          });
-          this.ratingScroll.on('scroll',(pos)=>{
-            console.log(pos)
-          })
-        })
-        if(!this.ratingreq){
-          this.getRatingData()
+    changeTag(value) {
+      this.currentTag = value;
+      if (value === "rating") {
+        this.showTag = true;
+        if (!this.ratingreq) {
+          this.getRatingData();
         }
-      }else{
-        this.showTag = false
+      } else {
+        this.showTag = false;
       }
     },
-    goBack(){
-      // console.log()
-      this.$router.back()
+    goBack() {
+      this.$router.back();
     },
-    async getRatingData(){
-      console.log('getRatingData')
-      this.loadingShow = true
-      this.ratingreq = true
-      const score = await ratingScore(this.$route.query.id)
-      this.ratingScore = score
-      const category = await ratingCategory(this.$route.query.id)
-      this.ratingTag = category
-      const list = await ratingList({restaurant_id:this.$route.query.id})
-      this.ratingList = list
-      if(list.length >=10){
-        this.loadingShow = false
+    async getRatingData() {
+      this.loadingShow = true;
+      this.ratingreq = true;
+      const score = await ratingScore(this.$route.query.id);
+      this.ratingScore = score;
+      const category = await ratingCategory(this.$route.query.id);
+      this.ratingTag = category;
+      const list = await ratingList({
+        restaurant_id: this.$route.query.id,
+        offset: this.offset,
+      });
+      this.ratingList = [...this.ratingList, ...list];
+      if (list.length >= 10) {
+        this.loadingShow = false;
+        this.ratingreq = false;
       }
     },
     updataMyCart(item) {
@@ -395,18 +462,16 @@ export default {
         });
       }
     },
-    reduceFood(item){
-      this.$store.commit('REDUCEMYCART',item)
-      console.log(this.myShopCart)
-      const arr = this.myShopCart.filter(ele=>{
-        return ele.num !=0
-      })
-      this.myShopCart = arr
+    reduceFood(item) {
+      this.$store.commit("REDUCEMYCART", item);
+      const arr = this.myShopCart.filter((ele) => {
+        return ele.num != 0;
+      });
+      this.myShopCart = arr;
     },
-    addFood(item){
-      console.log('+++')
-      this.$store.commit('ADD_CART',item)
-      this.updataMyCart()
+    addFood(item) {
+      this.$store.commit("ADD_CART", item);
+      this.updataMyCart();
     },
     // 清空购物车
     clearMyCart() {
@@ -419,64 +484,64 @@ export default {
     // 确认下单  跳转页面
     async goConfirmOrder() {
       // url获取  仓库获取  发请求
-      let geohash = this.$route.query.geohash || this.$store.state.geohash
-      if(!geohash){
+      let geohash = this.$route.query.geohash || this.$store.state.geohash;
+      if (!geohash) {
         // cityGuess
-        const result = await cityGuess()
-        geohash = result.latitude+ ',' + result.longitude
+        const result = await cityGuess();
+        geohash = result.latitude + "," + result.longitude;
       }
       this.$router.push({
         path: "/confirmOrder",
-        query:{
-          id:this.$route.query.id,
-          geohash
-        }
+        query: {
+          id: this.$route.query.id,
+          geohash,
+        },
       });
     },
     // 初始化数据
     async getData() {
-      // console.log('初始化数据')
       const result = await shoplist(this.$route.query.id);
       this.shopDetailList = result;
-      this.loadingShow = false
-    },
-    navTarget(id) {
-      this.currentId = id;
-      const contain = this.$refs.detail;
-      const target = this.$refs[id][1];
-      console.log(this.currentId);
-      contain.scrollTo({
-        top: target.offsetTop,
-        // behavior: "smooth",
-      });
-    },
-    location() {
-      if (this.timer) {
-        clearTimeout();
+      if (this.shopDetailList.length != 0) {
+        const detailContain = this.$refs['detail']
+
+        this.$nextTick(()=>{
+          Array.from(detailContain.children[0].children).forEach((element,index)=>{
+            this.TopList[index] = element.offsetTop
+          })
+
+          this.columnScroll = new BScroll(this.$refs['columnContain'],{
+            probeType:2,
+            bounce:false,
+            click:true
+          })
+
+        this.detailScroll =  new BScroll(this.$refs['detail'],{
+            probeType:3,
+            click:true
+          })
+          this.detailScroll.on('scroll',(pop)=>{
+            this.TopList.forEach((item,index)=>{
+              if(Math.abs(pop.y) >= item && !this.skilPosition){
+                this.currentIndex = index
+              }
+            })
+          })
+        })
       }
-      this.timer = setTimeout(() => {
-        const detail = this.$refs.detail;
-        const target = this.$refs[this.currentId][1];
-        const nowindex = this.flagrefs.indexOf(this.currentId);
-        const nextTarget =
-          nowindex < this.flagrefs.length - 1
-            ? this.$refs[this.flagrefs[nowindex + 1]][1]
-            : null;
-        const preTarget =
-          nowindex > 0 ? this.$refs[this.flagrefs[nowindex - 1]][1] : null;
-        if (nextTarget) {
-          if (detail.scrollTop > nextTarget.offsetTop) {
-            console.log("向下滚动一个开始执行");
-            this.currentId = this.flagrefs[nowindex + 1];
-          }
-        }
-        if (preTarget) {
-          if (detail.scrollTop + 1 < target.offsetTop) {
-            console.log("向上滚动一个开始执行");
-            this.currentId = this.flagrefs[nowindex - 1];
-          }
-        }
-      });
+      this.loadingShow = false;
+    },
+    navTarget(index) {
+      this.currentIndex = index
+     let target = Array.from(this.$refs['detail'].children[0].children).filter(item=>{
+      return item.className == 'active'
+     })
+     target = target[0]
+     this.skilPosition = true
+      this.detailScroll.scrollTo(0,-(this.TopList[this.currentIndex]),400)
+      this.detailScroll.on('scrollEnd',()=>{
+        this.skilPosition = false
+      })
     },
     // 添加商品到购物车
     addcart(elLeft, elTop, moveDot) {
@@ -614,19 +679,19 @@ export default {
   position: fixed;
   top: (188 / @baseSize);
   width: 100%;
-  .column {
-    width: 25%;
-    max-height: (659 / @baseSize);
-    overflow: auto;
+  .columnContain{
+    height:(659 / @baseSize);
     float: left;
-    //    background-color: firebrick;
+    width: 25%;
+    overflow: hidden;
+  }
+  .column {
     li {
       width: 100%;
       height: (70 / @baseSize);
       line-height: (70 / @baseSize);
       font-size: (18 / @baseSize);
       font-weight: bold;
-      // background: yellowgreen;
       &.active {
         border-left: (4 / @baseSize) solid #3190e8;
         background: white;
@@ -635,17 +700,13 @@ export default {
   }
   .detail {
     width: 75%;
-    max-height: (659 / @baseSize);
-    overflow: auto;
+    height: (659 / @baseSize);
+    overflow:hidden;
     float: left;
     text-align: left;
     dl {
-      &.active {
-        padding-top: (55 / @baseSize);
-      }
       dt {
         position: relative;
-        overflow-y: overlay;
         background: #f5f5f5;
         width: 100%;
         height: (55 / @baseSize);
@@ -653,11 +714,6 @@ export default {
         line-height: (70 / @baseSize);
         padding-left: (10 / @baseSize);
         font-weight: bold;
-        &.active {
-          position: fixed;
-          top: (187 / @baseSize);
-          z-index: 5;
-        }
         span {
           padding-left: (10 / @baseSize);
           font-size: (12 / @baseSize);
@@ -726,47 +782,48 @@ export default {
   }
 }
 
-.rating{
-  .ratingmain{
+.rating {
+  .ratingmain {
     position: absolute;
     width: 100%;
     margin-top: (188 / @baseSize);
     overflow: hidden;
-    height:300px;
-    header{
+    height: 700px;
+    // border: 1px solid red;
+    header {
       display: flex;
       justify-content: space-around;
       padding-top: (10 / @baseSize);
       padding-left: (20 / @baseSize);
       padding-bottom: (10 / @baseSize);
       background: white;
-      .ratingleft{
+      .ratingleft {
         // border: 1px solid red;
         flex: 1;
-        :nth-child(1){
+        :nth-child(1) {
           font-size: (34 / @baseSize);
           color: #f60;
         }
-        :nth-child(2){
+        :nth-child(2) {
           font-size: (18 / @baseSize);
-          color:#3d3d3f;
+          color: #3d3d3f;
         }
-        :nth-child(3){
+        :nth-child(3) {
           font-size: (12 / @baseSize);
           color: gray;
         }
       }
-      .ratingright{
+      .ratingright {
         // border: 1px solid red;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         flex: 1;
-        p{
+        p {
           display: flex;
           font-size: 4vw;
           color: #3d3d3f;
-          .mystar{
+          .mystar {
             width: (80 / @baseSize);
             height: (16 / @baseSize);
             vertical-align: sub;
@@ -775,75 +832,75 @@ export default {
         }
       }
     }
-    .ratingTag{
+    .ratingTag {
       display: flex;
       flex-wrap: wrap;
       margin-top: (10 / @baseSize);
       background: white;
       padding: 0 (12 / @baseSize) (10 / @baseSize);
-      li{
+      li {
         padding: (3 / @baseSize) (5 / @baseSize);
         border-radius: (10 / @baseSize);
         background: #ebf5ff;
         margin-left: (10 / @baseSize);
         margin-top: (10 / @baseSize);
-        &.active{
+        &.active {
           background: #3190e8;
         }
       }
     }
-    .ratingMenu{
+    .ratingMenu {
       background: white;
-      li{
+      li {
         display: flex;
         justify-content: space-around;
         padding-top: (10 / @baseSize);
         text-align: left;
-        header{
+        header {
           text-align: left;
           justify-content: space-between;
           padding: 0;
           margin: 0;
         }
-        img{
+        img {
           width: (50 / @baseSize);
           height: (50 / @baseSize);
           margin-left: (10 / @baseSize);
         }
-        .ratingContent{
+        .ratingContent {
           // border: 1px solid red;
           width: (252 / @baseSize);
-          .ratingstar{
+          .ratingstar {
             display: flex;
-            .hwyStar{
+            .hwyStar {
               margin-left: (10 / @baseSize);
               width: (100 / @baseSize);
               // border: 1px solid black;
             }
           }
-          main{
+          main {
             display: flex;
-            .group{
-            width: (60 / @baseSize);
-            height: (80 / @baseSize);
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            p{
-              width: (30 / @baseSize);
-              color: gray;
-              overflow: hidden;
-              text-overflow:ellipsis;
-              white-space: nowrap;
+            .group {
+              width: (60 / @baseSize);
+              height: (80 / @baseSize);
+              display: flex;
+              justify-content: center;
+              flex-direction: column;
+              p {
+                width: (30 / @baseSize);
+                color: gray;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
             }
           }
-          }
         }
-        .timer{
+        .timer {
           // border: 1px solid red;
           font-size: (14 / @baseSize);
         }
-        .avatar{
+        .avatar {
           border-radius: 50%;
           // border: 1px solid red;
         }
@@ -902,7 +959,7 @@ export default {
     z-index: -1;
     max-height: (600 / @baseSize);
     overflow: auto;
-    .cartmain{
+    .cartmain {
       margin-top: (49 / @baseSize);
     }
     dt {

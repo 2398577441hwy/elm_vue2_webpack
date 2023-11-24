@@ -49,9 +49,7 @@ export const homenav = (geohash)=>fetch('/v2/index_entry',{geohash},'GET')
 export const homelist = (latitude,longitude,offset,restaurant_category_id='',restaurant_category_ids='',order_by='',delivery_mode='',support_ids = [])=>{
 	let supportStr = '';
 	support_ids.forEach(item=>{
-		if(item.status){
-			supportStr += '&support_ids[]=' + item.id
-		}
+			supportStr += '&support_ids[]=' + item
 	})
 	let data = {
 		latitude,
@@ -114,7 +112,7 @@ export const searchRestaurants = (geohash,keyword)=>fetch(`/v4/restaurants`,{geo
 
 // 获取评分列表
 
-export const ratingList = ({restaurant_id,tag_name,offset,limit})=>fetch(`/ugc/v2/restaurants/${restaurant_id}/ratings`,{tag_name,offset,limit})
+export const ratingList = ({restaurant_id,offset,tag_name,limit=10})=>fetch(`/ugc/v2/restaurants/${restaurant_id}/ratings`,{tag_name,offset,limit})
 
 // 获取评价分类
 export const ratingCategory = (restaurant_id)=>fetch(`/ugc/v2/restaurants/${restaurant_id}/ratings/tags`)
